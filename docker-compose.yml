@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: audiospace
       TZ: ${TZ:-America/Mexico_City}
     ports:
-      - "5432:5432"
+      - "5433:5432" # <-- PUERTO CORREGIDO PARA EVITAR CHOQUES
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U audiospace -d audiospace"]
       interval: 5s
