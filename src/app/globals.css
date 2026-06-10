@@ -1,0 +1,403 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  * {
+    border-color: #202225;
+  }
+
+  html, body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: #202225; /* discord-bg */
+    color: #dcddde; /* discord-text */
+    @apply font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar - Dark style */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-[#202225];
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[#2f3136];
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-[#36393f];
+  }
+}
+
+@layer components {
+  .discord-input {
+    @apply w-full bg-[#202225] text-[#dcddde] rounded-md px-3 py-2 border border-[#1e1f22] focus:border-[#5865F2] focus:ring-1 focus:ring-[#5865F2] focus:outline-none transition-colors;
+  }
+  
+  .discord-button {
+    @apply px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#202225];
+  }
+  
+  .discord-button-primary {
+    @apply bg-[#5865F2] text-white hover:bg-[#4752C4] focus:ring-[#5865F2];
+  }
+
+  .discord-button-secondary {
+    @apply bg-[#4f545c] text-white hover:bg-[#5d6269] focus:ring-[#4f545c];
+  }
+  
+  .discord-button-danger {
+    @apply bg-[#ed4245] text-white hover:bg-[#c9383b] focus:ring-[#ed4245];
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     FullCalendar — Premium Broadcast Calendar Theme
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* ── CSS Custom Properties ─────────────────────────────────────────────── */
+  .fc {
+    --fc-border-color: rgba(88,101,242,0.08);
+    --fc-daygrid-event-dot-width: 8px;
+    --fc-today-bg-color: rgba(88,101,242,0.06);
+    --fc-event-bg-color: transparent;
+    --fc-event-border-color: transparent;
+    --fc-page-bg-color: transparent;
+    --fc-neutral-bg-color: #1e1f2e;
+    --fc-list-event-hover-bg-color: rgba(88,101,242,0.04);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* ── Main Container ────────────────────────────────────────────────────── */
+  .calendar-container .fc {
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #24253a 0%, #1e1f2e 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  }
+
+  /* ── Grid Lines: Ultra-subtle watermark guides ─────────────────────────── */
+  .fc-theme-standard td,
+  .fc-theme-standard th {
+    border-color: rgba(255,255,255,0.06);
+    border-width: 1px;
+  }
+
+  .fc-theme-standard .fc-scrollgrid {
+    border-color: transparent;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .fc-timegrid-slot {
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  }
+
+  /* Alternating row tinting for depth */
+  .fc-timegrid-slot:nth-child(even) {
+    background: rgba(255,255,255,0.01);
+  }
+
+  /* Vertical day dividers */
+  .fc-timegrid-col {
+    border-right: 1px solid rgba(255,255,255,0.06) !important;
+  }
+  .fc-timegrid-col:last-child {
+    border-right: none !important;
+  }
+
+  /* ── Header (Toolbar) ──────────────────────────────────────────────────── */
+  .fc .fc-toolbar {
+    padding: 14px 20px;
+    margin-bottom: 0 !important;
+    background: rgba(30,31,46,0.7);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Title: Prominent, clean */
+  .fc .fc-toolbar-title {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Column Headers (Day labels) ───────────────────────────────────────── */
+  .fc .fc-col-header {
+    background: rgba(30,31,46,0.5);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .fc .fc-col-header-cell {
+    border-color: rgba(255,255,255,0.06) !important;
+    padding: 0 !important;
+  }
+
+  .fc .fc-col-header-cell-cushion {
+    color: #9b9ec7;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+    padding: 10px 8px;
+    text-transform: none;
+    display: block;
+    text-align: center;
+    transition: color 0.2s ease;
+  }
+
+  /* Today column header — subtle accent */
+  .fc .fc-day-today .fc-col-header-cell-cushion,
+  .fc .fc-col-header-cell.fc-day-today .fc-col-header-cell-cushion {
+    color: #5865F2 !important;
+    font-weight: 600;
+  }
+
+  /* ── Today Column Highlight ────────────────────────────────────────────── */
+  .fc .fc-day-today {
+    background: rgba(88,101,242,0.03) !important;
+  }
+
+  /* ── Time Axis Labels ──────────────────────────────────────────────────── */
+  .fc .fc-timegrid-axis-cushion,
+  .fc .fc-timegrid-slot-label-cushion {
+    color: #7b7ea8;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    padding-right: 12px !important;
+  }
+
+  .fc .fc-timegrid-axis-frame {
+    border-right: 1px solid rgba(88,101,242,0.06);
+  }
+
+  /* ── Buttons — Segmented Controls ──────────────────────────────────────── */
+  .fc .fc-button-group {
+    background: rgba(30,31,46,0.7);
+    border-radius: 10px;
+    padding: 2px;
+    border: 1px solid rgba(88,101,242,0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    gap: 0;
+  }
+
+  .fc .fc-button-primary {
+    background: transparent !important;
+    border: none !important;
+    color: #9b9ec7 !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    text-transform: capitalize !important;
+    border-radius: 8px !important;
+    padding: 6px 14px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+    line-height: 1.4 !important;
+  }
+
+  .fc .fc-button-primary:hover {
+    background: rgba(88,101,242,0.1) !important;
+    color: #c5c8f0 !important;
+  }
+
+  .fc .fc-button-primary:not(:disabled):active,
+  .fc .fc-button-primary:not(:disabled).fc-button-active {
+    background: rgba(88,101,242,0.15) !important;
+    color: #5865F2 !important;
+    border: none !important;
+    box-shadow: 0 0 0 1px rgba(88,101,242,0.2) !important;
+  }
+
+  .fc .fc-button-primary:focus {
+    box-shadow: none !important;
+  }
+
+  /* Today button — standalone pill */
+  .fc .fc-today-button {
+    background: rgba(30,31,46,0.7) !important;
+    border: 1px solid rgba(88,101,242,0.1) !important;
+    border-radius: 10px !important;
+    color: #9b9ec7 !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    padding: 6px 16px !important;
+    text-transform: capitalize !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25) !important;
+  }
+
+  .fc .fc-today-button:hover:not(:disabled) {
+    background: rgba(88,101,242,0.1) !important;
+    color: #c5c8f0 !important;
+  }
+
+  .fc .fc-today-button:disabled {
+    opacity: 0.35 !important;
+  }
+
+  /* ── Now Indicator (Red Line) ──────────────────────────────────────────── */
+  .fc .fc-timegrid-now-indicator-line {
+    border-color: #ed4245 !important;
+    border-width: 1.5px !important;
+    box-shadow: 0 0 8px rgba(237,66,69,0.3);
+  }
+
+  .fc .fc-timegrid-now-indicator-arrow {
+    border-color: #ed4245 !important;
+    border-width: 5px !important;
+  }
+
+  /* ── Event Blocks (Glassmorphism Cards) ────────────────────────────────── */
+  .fc-timegrid-event-harness {
+    margin: 1px 3px !important;
+  }
+
+  .fc-timegrid-event {
+    border-radius: 8px !important;
+    border: none !important;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .fc-timegrid-event:hover {
+    transform: translateY(-1px) scale(1.005);
+    z-index: 50 !important;
+    filter: brightness(1.15);
+  }
+
+  /* ── Per-Source-Type Colors ─────────────────────────────────────────── */
+  /* LOCAL (Green) */
+  .fc-timegrid-event.ev-local {
+    background: rgba(59,165,93,0.15) !important;
+    box-shadow: 0 2px 8px rgba(59,165,93,0.12), 0 0 0 1px rgba(59,165,93,0.1);
+  }
+  .fc-timegrid-event.ev-local:hover {
+    background: rgba(59,165,93,0.22) !important;
+    box-shadow: 0 4px 16px rgba(59,165,93,0.2), 0 0 0 1px rgba(59,165,93,0.15);
+  }
+
+  /* YOUTUBE (Red) */
+  .fc-timegrid-event.ev-youtube {
+    background: rgba(237,66,69,0.12) !important;
+    box-shadow: 0 2px 8px rgba(237,66,69,0.1), 0 0 0 1px rgba(237,66,69,0.08);
+  }
+  .fc-timegrid-event.ev-youtube:hover {
+    background: rgba(237,66,69,0.2) !important;
+    box-shadow: 0 4px 16px rgba(237,66,69,0.18), 0 0 0 1px rgba(237,66,69,0.12);
+  }
+
+  /* RADIO (Blurple) */
+  .fc-timegrid-event.ev-radio {
+    background: rgba(88,101,242,0.12) !important;
+    box-shadow: 0 2px 8px rgba(88,101,242,0.1), 0 0 0 1px rgba(88,101,242,0.08);
+  }
+  .fc-timegrid-event.ev-radio:hover {
+    background: rgba(88,101,242,0.2) !important;
+    box-shadow: 0 4px 16px rgba(88,101,242,0.18), 0 0 0 1px rgba(88,101,242,0.12);
+  }
+
+  /* ANNOUNCEMENT (Amber) */
+  .fc-timegrid-event.ev-announcement {
+    background: rgba(250,166,26,0.1) !important;
+    box-shadow: 0 2px 8px rgba(250,166,26,0.1), 0 0 0 1px rgba(250,166,26,0.08);
+  }
+  .fc-timegrid-event.ev-announcement:hover {
+    background: rgba(250,166,26,0.18) !important;
+    box-shadow: 0 4px 16px rgba(250,166,26,0.16), 0 0 0 1px rgba(250,166,26,0.12);
+  }
+
+  /* ── Selection Mirror ──────────────────────────────────────────────────── */
+  .fc .fc-highlight {
+    background: rgba(88,101,242,0.1) !important;
+    border: 1px dashed rgba(88,101,242,0.35) !important;
+    border-radius: 8px;
+  }
+
+  /* ── Day Grid (Month View) ─────────────────────────────────────────────── */
+  .fc-daygrid-day {
+    border-color: rgba(88,101,242,0.06) !important;
+  }
+
+  .fc-daygrid-day-number {
+    color: #9b9ec7;
+    font-weight: 500;
+    font-size: 13px;
+    padding: 8px !important;
+  }
+
+  .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+    color: #5865F2;
+    font-weight: 700;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     ZERO-SCROLL HACKS FOR FULLCALENDAR TIMEGRID (Preserved)
+     ═══════════════════════════════════════════════════════════════════════════ */
+  .fc-view-harness, .fc-timegrid, .fc-timegrid-body, .fc-timegrid-slots, .fc-timegrid-slots table {
+    height: 100% !important;
+  }
+  
+  .fc-scroller {
+    overflow: hidden !important; 
+    height: 100% !important;
+  }
+  
+  /* Force exactly 24 slots to fit by dynamically calculating height */
+  .fc-timegrid-body table tbody,
+  .fc-timegrid-slots table tbody,
+  .fc-timegrid-slots tbody {
+    display: grid !important;
+    grid-template-rows: repeat(24, minmax(0, 1fr)) !important;
+    height: 100% !important;
+  }
+
+  .fc-timegrid-slot {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+}
+
+/* DateTime-local input light theme overrides */
+input[type="datetime-local"] {
+  color-scheme: light;
+}
+
+/* Extracted component classes for long inline strings */
+@layer components {
+  .discord-range-slider {
+    @apply w-24 h-1.5 bg-[#202225] rounded-full appearance-none cursor-pointer transition-all;
+  }
+  .discord-range-slider::-webkit-slider-thumb {
+    @apply appearance-none w-3.5 h-3.5 rounded-full bg-[#5865F2];
+  }
+  .discord-range-slider::-webkit-slider-thumb:hover {
+    @apply bg-[#4752C4];
+  }
+
+  .discord-checkbox {
+    @apply appearance-none w-4 h-4 rounded border cursor-pointer transition-all bg-[#202225];
+  }
+  .discord-checkbox-blurple {
+    @apply border-[#4f545c] checked:bg-[#5865F2] checked:border-[#5865F2];
+  }
+  .discord-checkbox-warning {
+    @apply border-[#faa61a]/50 checked:bg-[#faa61a] checked:border-[#faa61a];
+  }
+}

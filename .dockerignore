@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.gitignore
+README.md
+docker-compose.yml
+Dockerfile
+.dockerignore
+.env.local
+audio_storage
+audiospace
