@@ -1,5 +1,8 @@
 # ---- Dependencies ----
 FROM node:20-alpine AS deps
+# Instalamos dependencias del sistema necesarias para Prisma en Alpine
+RUN apk add --no-cache openssl libc6-compat
+# Corregido el typo de <WORKDIR
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
@@ -18,6 +21,9 @@ RUN npm run build
 # ---- Runner ----
 FROM node:20-alpine AS runner
 WORKDIR /app
+
+# Instalamos OpenSSL en el entorno final para que la app no colapse al correr
+RUN apk add --no-cache openssl libc6-compat
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
