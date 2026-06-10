@@ -2,7 +2,7 @@
 set -e
 
 echo "[AudioSpace] Running database migrations..."
-npx prisma migrate deploy
+npx prisma@5 migrate deploy
 
 echo "[AudioSpace] Seeding database..."
 node prisma/seed.js || echo "[AudioSpace] Seed skipped (may already exist)"
