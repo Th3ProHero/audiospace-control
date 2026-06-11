@@ -6,171 +6,83 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('[Seed] Starting database seed...');
 
-  // Clear existing
-  await prisma.scheduleBlock.deleteMany();
-  await prisma.audioSource.deleteMany();
-  await prisma.profile.deleteMany();
-  await prisma.user.deleteMany();
-
-  // Create demo user
+  // 1. Create or update demo user
   const hashedPassword = await bcrypt.hash('password123', 10);
-  const user = await prisma.user.create({
-    data: {
+  const user = await prisma.user.upsert({
+    where: { email: 'admin@audiospace.local' },
+    update: {}, // Don't override existing password if they changed it
+    create: {
       email: 'admin@audiospace.local',
       password: hashedPassword,
       storageUsed: 0,
     },
   });
-  console.log('[Seed] Created user:', user.email);
+  console.log('[Seed] User secured:', user.email);
 
-  // Create profiles
-  const mallProfile = await prisma.profile.create({
-    data: {
-      userId: user.id,
-      name: 'Mall Lobby',
-    },
-  });
+  // 2. Check if profiles exist, if not create default ones
+  let mallProfile = await prisma.profile.findFirst({ where: { userId: user.id, name: 'Mall Lobby' } });
+  if (!mallProfile) {
+    mallProfile = await prisma.profile.create({ data: { userId: user.id, name: 'Mall Lobby' } });
+    console.log('[Seed] Created default profile: Mall Lobby');
+  }
 
-  const zooProfile = await prisma.profile.create({
-    data: {
-      userId: user.id,
-      name: 'Zoo Entrance',
-    },
-  });
-  console.log('[Seed] Created profiles: Mall Lobby, Zoo Entrance');
+  let zooProfile = await prisma.profile.findFirst({ where: { userId: user.id, name: 'Zoo Entrance' } });
+  if (!zooProfile) {
+    zooProfile = await prisma.profile.create({ data: { userId: user.id, name: 'Zoo Entrance' } });
+    console.log('[Seed] Created default profile: Zoo Entrance');
+  }
 
-  // Create audio sources
-  const ytPlaylist1 = await prisma.audioSource.create({
-    data: {
-      userId: user.id,
-      type: 'YOUTUBE',
-      name: 'Lofi Hip Hop Radio',
-      urlOrPath: 'jfKfPfyJRdk', // YouTube video ID
-    },
-  });
+  // 3. Create audio sources if they don't exist
+  const createAudioSourceIfNotExists = async (type: string, name: string, urlOrPath: string) => {
+    let source = await prisma.audioSource.findFirst({ where: { userId: user.id, urlOrPath } });
+    if (!source) {
+      source = await prisma.audioSource.create({
+        data: { userId: user.id, type, name, urlOrPath }
+      });
+      console.log(`[Seed] Created audio source: ${name}`);
+    }
+    return source;
+  };
 
-  const ytPlaylist2 = await prisma.audioSource.create({
-    data: {
-      userId: user.id,
-      type: 'YOUTUBE',
-      name: 'Jazz Cafe Music',
-      urlOrPath: 'VMAPTo7RVCo', // YouTube video ID
-    },
-  });
+  const ytPlaylist1 = await createAudioSourceIfNotExists('YOUTUBE', 'Lofi Hip Hop Radio', 'jfKfPfyJRdk');
+  const ytPlaylist2 = await createAudioSourceIfNotExists('YOUTUBE', 'Jazz Cafe Music', 'VMAPTo7RVCo');
+  const radioJazz = await createAudioSourceIfNotExists('RADIO', 'Smooth Jazz (KCSM)', 'https://ice6.securenetsystems.net/KCSM');
+  const radioLofi = await createAudioSourceIfNotExists('RADIO', 'Lo-Fi Beats Radio', 'https://streams.ilovemusic.de/iloveradio17.mp3');
+  const localMp3 = await createAudioSourceIfNotExists('LOCAL', 'Ambient Nature Sounds', 'ambient-nature.mp3');
+  const localMp3_2 = await createAudioSourceIfNotExists('LOCAL', 'Background Piano', 'background-piano.mp3');
 
-  const radioJazz = await prisma.audioSource.create({
-    data: {
-      userId: user.id,
-      type: 'RADIO',
-      name: 'Smooth Jazz (KCSM)',
-      urlOrPath: 'https://ice6.securenetsystems.net/KCSM',
-    },
-  });
-
-  const radioLofi = await prisma.audioSource.create({
-    data: {
-      userId: user.id,
-      type: 'RADIO',
-      name: 'Lo-Fi Beats Radio',
-      urlOrPath: 'https://streams.ilovemusic.de/iloveradio17.mp3',
-    },
-  });
-
-  const localMp3 = await prisma.audioSource.create({
-    data: {
-      userId: user.id,
-      type: 'LOCAL',
-      name: 'Ambient Nature Sounds',
-      urlOrPath: 'ambient-nature.mp3',
-    },
-  });
-
-  const localMp3_2 = await prisma.audioSource.create({
-    data: {
-      userId: user.id,
-      type: 'LOCAL',
-      name: 'Background Piano',
-      urlOrPath: 'background-piano.mp3',
-    },
-  });
-
-  console.log('[Seed] Created 6 audio sources');
-
-  // Create schedule blocks using absolute DateTimes
-  const now = new Date();
-  
-  // Helper to create date relative to today
-  const createDate = (daysOffset: number, hours: number, minutes: number) => {
+  // 4. Create schedule blocks if none exist for the profiles
+  const helperCreateDate = (daysOffset: number, hours: number, minutes: number) => {
     const d = new Date();
     d.setDate(d.getDate() + daysOffset);
     d.setHours(hours, minutes, 0, 0);
     return d;
   };
 
-  // Create schedule blocks for Mall Lobby (Today and Tomorrow)
-  await prisma.scheduleBlock.createMany({
-    data: [
-      {
-        profileId: mallProfile.id,
-        audioSourceId: radioJazz.id,
-        startTime: createDate(0, 8, 0),
-        endTime: createDate(0, 12, 0),
-        blockType: 'MUSIC',
-      },
-      {
-        // 15 minute announcement overlapping the jazz music
-        profileId: mallProfile.id,
-        audioSourceId: localMp3.id,
-        startTime: createDate(0, 10, 0),
-        endTime: createDate(0, 10, 15),
-        blockType: 'ANNOUNCEMENT',
-      },
-      {
-        profileId: mallProfile.id,
-        audioSourceId: ytPlaylist1.id,
-        startTime: createDate(0, 12, 0),
-        endTime: createDate(0, 17, 0),
-        blockType: 'MUSIC',
-      },
-      {
-        profileId: mallProfile.id,
-        audioSourceId: radioLofi.id,
-        startTime: createDate(0, 17, 0),
-        endTime: createDate(0, 21, 0),
-        blockType: 'MUSIC',
-      },
-    ],
-  });
+  const mallBlocksCount = await prisma.scheduleBlock.count({ where: { profileId: mallProfile.id } });
+  if (mallBlocksCount === 0) {
+    await prisma.scheduleBlock.createMany({
+      data: [
+        { profileId: mallProfile.id, audioSourceId: radioJazz.id, startTime: helperCreateDate(0, 8, 0), endTime: helperCreateDate(0, 12, 0), blockType: 'MUSIC' },
+        { profileId: mallProfile.id, audioSourceId: localMp3.id, startTime: helperCreateDate(0, 10, 0), endTime: helperCreateDate(0, 10, 15), blockType: 'ANNOUNCEMENT' },
+        { profileId: mallProfile.id, audioSourceId: ytPlaylist1.id, startTime: helperCreateDate(0, 12, 0), endTime: helperCreateDate(0, 17, 0), blockType: 'MUSIC' },
+        { profileId: mallProfile.id, audioSourceId: radioLofi.id, startTime: helperCreateDate(0, 17, 0), endTime: helperCreateDate(0, 21, 0), blockType: 'MUSIC' },
+      ],
+    });
+    console.log('[Seed] Created default schedule blocks for Mall Lobby');
+  }
 
-  // Create schedule blocks for Zoo Entrance
-  await prisma.scheduleBlock.createMany({
-    data: [
-      {
-        profileId: zooProfile.id,
-        audioSourceId: ytPlaylist2.id,
-        startTime: createDate(0, 9, 0),
-        endTime: createDate(0, 18, 0),
-        blockType: 'MUSIC',
-      },
-      {
-        // Repeating announcements every hour
-        profileId: zooProfile.id,
-        audioSourceId: localMp3.id,
-        startTime: createDate(0, 12, 0),
-        endTime: createDate(0, 12, 5),
-        blockType: 'ANNOUNCEMENT',
-      },
-      {
-        profileId: zooProfile.id,
-        audioSourceId: localMp3_2.id,
-        startTime: createDate(0, 14, 0),
-        endTime: createDate(0, 14, 5),
-        blockType: 'ANNOUNCEMENT',
-      },
-    ],
-  });
-
-  console.log('[Seed] Created schedule blocks');
+  const zooBlocksCount = await prisma.scheduleBlock.count({ where: { profileId: zooProfile.id } });
+  if (zooBlocksCount === 0) {
+    await prisma.scheduleBlock.createMany({
+      data: [
+        { profileId: zooProfile.id, audioSourceId: ytPlaylist2.id, startTime: helperCreateDate(0, 9, 0), endTime: helperCreateDate(0, 18, 0), blockType: 'MUSIC' },
+        { profileId: zooProfile.id, audioSourceId: localMp3.id, startTime: helperCreateDate(0, 12, 0), endTime: helperCreateDate(0, 12, 5), blockType: 'ANNOUNCEMENT' },
+        { profileId: zooProfile.id, audioSourceId: localMp3_2.id, startTime: helperCreateDate(0, 14, 0), endTime: helperCreateDate(0, 14, 5), blockType: 'ANNOUNCEMENT' },
+      ],
+    });
+    console.log('[Seed] Created default schedule blocks for Zoo Entrance');
+  }
   console.log('[Seed] Database seeding completed successfully!');
 }
 

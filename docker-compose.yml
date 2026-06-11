@@ -36,6 +36,8 @@ services:
       TZ: ${TZ:-America/Mexico_City}
       HOSTNAME: "0.0.0.0"
       PORT: "3000"
+      NEXT_PUBLIC_APP_URL: "http://192.168.0.220:8082"
+      NEXTAUTH_URL: "http://192.168.0.220:8082"
     ports:
       - "8082:3000"
     volumes:

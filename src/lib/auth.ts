@@ -32,9 +32,13 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
 export async function setSessionCookie(payload: JWTPayload): Promise<void> {
   const token = await createToken(payload);
   const cookieStore = await cookies();
+  
+  // Use NEXT_PUBLIC_APP_URL to determine if we are running on HTTPS
+  const isHttps = process.env.NEXT_PUBLIC_APP_URL?.startsWith('https://') || false;
+  
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production' && isHttps,
     sameSite: 'lax',
     maxAge: 60 * 60 * 24, // 24 hours
     path: '/',
