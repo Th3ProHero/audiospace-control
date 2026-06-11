@@ -1,11 +1,11 @@
 #!/bin/sh
 set -e
 
-echo "[AudioSpace] Running database migrations..."
-npx prisma@5 migrate deploy
+echo "[AudioSpace] Pushing database schema..."
+npx prisma@5 db push --accept-data-loss
 
 echo "[AudioSpace] Seeding database..."
-node prisma/seed.js || echo "[AudioSpace] Seed skipped (may already exist)"
+npx --yes tsx prisma/seed.ts || echo "[AudioSpace] Seed skipped (may already exist or fail)"
 
 echo "[AudioSpace] Starting application..."
 exec "$@"

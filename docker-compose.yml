@@ -34,8 +34,10 @@ services:
       JWT_SECRET: audiospace_jwt_secret_change_in_production
       NODE_ENV: production
       TZ: ${TZ:-America/Mexico_City}
+      HOSTNAME: "0.0.0.0"
+      PORT: "3000"
     ports:
-      - "3000:3000"
+      - "8082:3000"
     volumes:
       - audio_storage:/storage
     restart: unless-stopped
